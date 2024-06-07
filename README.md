@@ -12,15 +12,11 @@ This is a simple file management system built with FastAPI and PostgreSQL. It al
 ---
 3. Set up the PostgreSQL database and configure the environment variables. You can do this by creating a `.env` file in the root directory and adding the following variables:
    ```
-   DB_HOST=your_database_host
-   DB_PORT=your_database_port
-   DB_USER=your_database_user
-   DB_PASSWORD=your_database_password
-   DB_NAME=your_database_name
+   DB_HOST, DB_PORT, DB_USER, DB_PASSWORD, DB_NAME
    ```
 ---
 4. Run the FastAPI application:
-   ```bash
+   ```
    uvicorn main:app --reload
    ```
 
