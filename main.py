@@ -1,7 +1,6 @@
 import os
 import urllib
 import psycopg2
-
 from fastapi import FastAPI, HTTPException, Response, File, UploadFile
 from dotenv import dotenv_values
 from uuid import uuid4
@@ -9,15 +8,11 @@ from uuid import uuid4
 app = FastAPI()
 env_vars = dotenv_values()
 
-#database connection
 connection = psycopg2.connect(**env_vars)
-
-#directory to work with files
 UPLOAD_DIR = 'uploads'
 if not os.path.exists(UPLOAD_DIR):
     os.makedirs(UPLOAD_DIR)
     
-#route to upload a file
 @app.post('/upload/')
 async def upload_file(file: UploadFile = File(...)):
     try:
@@ -25,17 +20,13 @@ async def upload_file(file: UploadFile = File(...)):
         path = os.path.join(UPLOAD_DIR, file_path)
         with open(path, 'wb') as f:
             f.write(await file.read())
-        
         with connection.cursor() as cursor:
             cursor.execute('INSERT INTO files(filename) VALUES(%s)', (file_path,))
             connection.commit()
-
         return  {"filename": file_path, 'to_download': f'/download/{file_path}'}
-
     except:
-        return {'error': 'something went wrong: line #36'}
+        return {'error': 'something went wrong: line #31'}
 
-#route to download a file
 @app.get('/download/{filename}')
 async def download_file(filename: str):
     try:
@@ -51,11 +42,9 @@ async def download_file(filename: str):
             contents = f.read()
 
         return Response(content=contents, media_type="application/octet-stream", headers={"Content-Disposition": f"attachment; filename*=UTF-8''{urllib.parse.quote(os.path.basename(file_path))}"})
-
     except:
-        return {'error': 'something went wrong: line #56'}
+        return {'error': 'something went wrong: line #46'}
 
-#Route to delete a file
 @app.delete('/delete/{filename}')
 async def delete_file(filename: str):
     try:
@@ -67,4 +56,4 @@ async def delete_file(filename: str):
         return {'message': 'file successfully deleted'}
 
     except:
-        return {'error': 'something went wrong: line #70'}
+        return {'error': 'something went wrong: line #59'}
